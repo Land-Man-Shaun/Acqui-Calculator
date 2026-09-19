@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Acqui Calculator · Bailey Buys</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%231F3D2E'/%3E%3Crect x='7' y='5' width='18' height='22' rx='3' fill='%230A0A0A' stroke='%23E8B937' stroke-width='1.5'/%3E%3Crect x='10' y='8' width='12' height='6' rx='1.5' fill='%23E8B937'/%3E%3Ccircle cx='11.5' cy='19' r='1.5' fill='%23E8B937'/%3E%3Ccircle cx='16' cy='19' r='1.5' fill='%23E8B937'/%3E%3Ccircle cx='20.5' cy='19' r='1.5' fill='%23E8B937'/%3E%3Ccircle cx='11.5' cy='23.5' r='1.5' fill='%233D7A57'/%3E%3Ccircle cx='16' cy='23.5' r='1.5' fill='%233D7A57'/%3E%3Ccircle cx='20.5' cy='23.5' r='1.5' fill='%23E8B937'/%3E%3C/svg%3E" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --black:        #0A0A0A;
+    --black-card:   #0D0D0D;
+    --black-row:    #141A14;
+    --green-dark:   #1F3D2E;
+    --green-mid:    #2E5C42;
+    --green-light:  #3D7A57;
+    --green-faint:  rgba(31,61,46,0.35);
+    --gold:         #E8B937;
+    --gold-dim:     #B8921E;
+    --gold-pale:    #F5D878;
+    --gold-faint:   rgba(232,185,55,0.12);
+    --gold-border:  rgba(232,185,55,0.25);
+    --white:        #FFFFFF;
+    --white-80:     rgba(255,255,255,0.8);
+    --white-55:     rgba(255,255,255,0.55);
+    --white-30:     rgba(255,255,255,0.3);
+    --white-10:     rgba(255,255,255,0.1);
+    --white-06:     rgba(255,255,255,0.06);
+    --border:       rgba(255,255,255,0.07);
+    --border-green: rgba(31,61,46,0.6);
+    --success:      #4DBF7F;
+    --danger:       #FF5252;
+  }
+
+  html, body { min-height: 100vh; background: var(--black); font-family: 'Inter', sans-serif; color: var(--white); }
+  body {
+    display: flex; flex-direction: column; align-items: center;
+    padding: 56px 24px 72px;
+    background-image:
+      radial-gradient(ellipse 70% 45% at 50% 0%, rgba(232,185,55,0.07) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 30% at 90% 95%, rgba(232,185,55,0.04) 0%, transparent 60%);
+  }
+
+  /* Header */
+  .header { width: 100%; max-width: 580px; margin-bottom: 44px; text-align: center; }
+  .header-eyebrow {
+    font-size: 10px; font-weight: 600; letter-spacing: 0.28em;
+    text-transform: uppercase; color: var(--gold); margin-bottom: 14px;
+  }
+  .header-title {
+    font-family: 'Plus Jakarta Sans', sans-serif; font-size: 56px; font-weight: 800;
+    letter-spacing: -0.03em; line-height: 1; margin-bottom: 12px;
+    background: linear-gradient(135deg, #FFFFFF 30%, #E8B937 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .header-sub {
+    font-size: 12px; font-weight: 300; color: var(--white-30);
+    letter-spacing: 0.12em; text-transform: uppercase;
+  }
+  .header-sub span { color: var(--white-55); }
+  .gold-rule { display: flex; align-items: center; gap: 12px; justify-content: center; margin-top: 20px; }
+  .gold-rule::before { content:''; display:block; height:1px; width:48px; background: linear-gradient(90deg, transparent, var(--gold)); }
+  .gold-rule::after  { content:''; display:block; height:1px; width:48px; background: linear-gradient(90deg, var(--gold), transparent); }
+  .gold-rule-dot { width:5px; height:5px; border-radius:50%; background:var(--gold); }
+
+  /* Card */
+  .card {
+    width: 100%; max-width: 580px;
+    background: var(--black-card);
+    border: 1px solid var(--gold-border);
+    border-radius: 20px; overflow: hidden;
+    box-shadow: 0 0 80px rgba(31,61,46,0.3), 0 0 40px rgba(232,185,55,0.04), 0 24px 48px rgba(0,0,0,0.7);
+  }
+
+  .section-label {
+    font-size: 9px; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--gold); padding: 18px 28px 14px;
+    background: rgba(232,185,55,0.05);
+    border-bottom: 1px solid rgba(232,185,55,0.12);
+  }
+  .card-body { padding: 0 28px; }
+  .card-divider { height: 1px; background: rgba(232,185,55,0.2); }
+
+  /* Field rows */
+  .field-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 17px 0; border-bottom: 1px solid var(--border); gap: 16px;
+  }
+  .field-row:last-child { border-bottom: none; }
+  .field-label { font-size: 13px; font-weight: 400; color: var(--white-55); flex: 1; display: flex; align-items: center; gap: 10px; }
+  .field-label svg { opacity: 0.45; flex-shrink: 0; }
+  .field-control { display: flex; align-items: center; gap: 8px; justify-content: flex-end; }
+  .prefix { font-size: 13px; color: var(--white-30); }
+
+  input[type="number"] {
+    background: var(--white); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px;
+    color: #0A0A0A; font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 600;
+    padding: 9px 13px; width: 150px; text-align: right; outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s; -moz-appearance: textfield;
+  }
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
+  input[type="number"]:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(232,185,55,0.2); }
+
+  select {
+    background: var(--white); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px;
+    color: #0A0A0A; font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 600;
+    padding: 9px 30px 9px 12px; width: 96px; outline: none; cursor: pointer;
+    transition: border-color 0.15s, box-shadow 0.15s; appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7' viewBox='0 0 11 7'%3E%3Cpath d='M1 1l4.5 4.5L10 1' stroke='%231F3D2E' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 10px center;
+  }
+  select:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(232,185,55,0.2); }
+  select option { background: #fff; color: #0A0A0A; }
+
+  .offer-inline { font-size: 16px; font-weight: 600; color: var(--gold); min-width: 110px; text-align: right; }
+  .eq-sign { font-size: 13px; color: var(--white-30); }
+
+  /* Output rows */
+  .out-row {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    padding: 15px 0; border-bottom: 1px solid var(--border); gap: 16px;
+  }
+  .out-row:last-child { border-bottom: none; }
+  .out-label { font-size: 13px; font-weight: 400; color: var(--white-55); display: flex; align-items: center; gap: 10px; flex: 1; }
+  .out-label svg { opacity: 0.45; flex-shrink: 0; }
+  .out-note { font-size: 11px; font-weight: 300; color: var(--white-30); margin-left: 4px; }
+  .out-val-wrap { text-align: right; }
+  .out-value { font-size: 17px; font-weight: 600; color: var(--white-80); }
+  .out-value.highlight { color: var(--gold); }
+  .out-sub { font-size: 11px; color: var(--gold-dim); margin-top: 3px; font-weight: 500; }
+  .out-sub.ppa { color: var(--gold-pale); }
+  .out-sub.ppa-hint { color: var(--white-30); font-weight: 300; }
+
+  .badge {
+    display: inline-block; font-size: 9px; font-weight: 600; letter-spacing: 0.1em;
+    text-transform: uppercase; padding: 3px 7px; border-radius: 4px;
+    background: rgba(232,185,55,0.12); color: var(--gold);
+    border: 1px solid rgba(232,185,55,0.25); margin-left: 8px; vertical-align: middle;
+  }
+
+  /* Profit bar */
+  .profit-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 26px 28px;
+    background: rgba(232,185,55,0.05);
+  }
+  .profit-bar-label {
+    font-size: 9px; font-weight: 600; letter-spacing: 0.22em;
+    text-transform: uppercase; color: var(--white-30); margin-bottom: 2px;
+  }
+  .profit-bar-amount {
+    font-family: 'Plus Jakarta Sans', sans-serif; font-size: 46px; font-weight: 800;
+    letter-spacing: -0.02em; line-height: 1; color: var(--white-30); transition: color 0.2s;
+  }
+  .profit-bar-amount.pos { color: var(--success); }
+  .profit-bar-amount.neg { color: var(--danger); }
+
+  /* Reset */
+  .reset-wrap {
+    padding: 0 28px 22px;
+    background: rgba(232,185,55,0.05);
+    display: flex; justify-content: flex-end;
+  }
+  .reset-btn {
+    font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--white-30); background: transparent;
+    border: 1px solid rgba(31,61,46,0.7); border-radius: 8px;
+    padding: 8px 18px; cursor: pointer;
+    transition: color 0.15s, border-color 0.15s, background 0.15s;
+  }
+  .reset-btn:hover { color: var(--gold); border-color: var(--gold-border); background: var(--gold-faint); }
+
+  /* Footer */
+  .footer { margin-top: 24px; font-size: 10px; font-weight: 400; color: var(--white-30); text-align: center; letter-spacing: 0.14em; text-transform: uppercase; }
+  .footer strong { color: var(--gold-dim); font-weight: 600; }
+
+  @media (max-width: 520px) {
+    body { padding: 36px 16px 56px; }
+    .header-title { font-size: 46px; }
+    .card-body { padding: 0 20px; }
+    .section-label { padding: 16px 20px 12px; }
+    .profit-bar, .reset-wrap { padding-left: 20px; padding-right: 20px; }
+    .profit-bar-amount { font-size: 38px; }
+    input[type="number"] { width: 120px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <p class="header-eyebrow">Bailey Buys</p>
+  <h1 class="header-title">Acqui Calculator</h1>
+  <p class="header-sub"><span>Deal Analysis</span> &nbsp;·&nbsp; List Price &nbsp;·&nbsp; Profit Estimate</p>
+  <div class="gold-rule"><div class="gold-rule-dot"></div></div>
+</header>
+
+<main class="card" role="main">
+
+  <div class="section-label">Deal inputs</div>
+  <div class="card-body">
+
+    <div class="field-row">
+      <label class="field-label" for="mktVal">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Market value
+      </label>
+      <div class="field-control">
+        <span class="prefix">$</span>
+        <input type="number" id="mktVal" placeholder="0" min="0" step="1000" oninput="calc()" />
+      </div>
+    </div>
+
+    <div class="field-row">
+      <label class="field-label" for="acres">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l4-8 4 4 4-6 4 10"/><path d="M3 21h18"/></svg>
+        Acreage
+      </label>
+      <div class="field-control">
+        <input type="number" id="acres" placeholder="0.00" min="0" step="0.01" oninput="calc()" />
+        <span class="prefix">ac</span>
+      </div>
+    </div>
+
+    <div class="field-row">
+      <label class="field-label" for="listPct">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+        List price discount
+      </label>
+      <div class="field-control">
+        <select id="listPct" onchange="calc()">
+          <option value="0.05">5%</option><option value="0.06">6%</option><option value="0.07">7%</option>
+          <option value="0.08">8%</option><option value="0.09">9%</option><option value="0.10" selected>10%</option>
+          <option value="0.11">11%</option><option value="0.12">12%</option><option value="0.13">13%</option>
+          <option value="0.14">14%</option><option value="0.15">15%</option>
+          <option value="0.16">16%</option><option value="0.17">17%</option>
+          <option value="0.18">18%</option><option value="0.19">19%</option>
+          <option value="0.20">20%</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="field-row">
+      <label class="field-label" for="offerPct">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+        Offer to seller
+      </label>
+      <div class="field-control">
+        <select id="offerPct" onchange="calc()">
+          <option value="0.35">35%</option><option value="0.36">36%</option><option value="0.37">37%</option>
+          <option value="0.38">38%</option><option value="0.39">39%</option><option value="0.40">40%</option>
+          <option value="0.41">41%</option><option value="0.42">42%</option><option value="0.43">43%</option>
+          <option value="0.44">44%</option><option value="0.45">45%</option><option value="0.46">46%</option>
+          <option value="0.47">47%</option><option value="0.48">48%</option><option value="0.49">49%</option>
+          <option value="0.50" selected>50%</option><option value="0.51">51%</option><option value="0.52">52%</option>
+          <option value="0.53">53%</option><option value="0.54">54%</option><option value="0.55">55%</option>
+          <option value="0.56">56%</option><option value="0.57">57%</option><option value="0.58">58%</option>
+          <option value="0.59">59%</option><option value="0.60">60%</option><option value="0.61">61%</option>
+          <option value="0.62">62%</option><option value="0.63">63%</option><option value="0.64">64%</option>
+          <option value="0.65">65%</option><option value="0.66">66%</option><option value="0.67">67%</option>
+          <option value="0.68">68%</option><option value="0.69">69%</option><option value="0.70">70%</option>
+          <option value="0.71">71%</option><option value="0.72">72%</option><option value="0.73">73%</option>
+          <option value="0.74">74%</option><option value="0.75">75%</option><option value="0.76">76%</option>
+          <option value="0.77">77%</option><option value="0.78">78%</option><option value="0.79">79%</option>
+          <option value="0.80">80%</option>
+        </select>
+        <span class="eq-sign">= $</span>
+        <span class="offer-inline" id="offerInline">—</span>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="card-divider"></div>
+
+  <div class="section-label">Calculated costs</div>
+  <div class="card-body">
+
+    <div class="out-row">
+      <div class="out-label">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        List price
+        <span class="badge" id="snapBadge" style="display:none;"></span>
+      </div>
+      <div class="out-val-wrap">
+        <div class="out-value highlight" id="listOut">—</div>
+        <div class="out-sub" id="listSub"></div>
+        <div class="out-sub ppa" id="listPpaOut" style="display:none;"></div>
+        <div class="out-sub ppa-hint" id="listPpaHint" style="display:none;">Enter acreage for PPA</div>
+      </div>
+    </div>
+
+    <div class="out-row">
+      <div class="out-label">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+        Offer to seller
+      </div>
+      <div class="out-val-wrap">
+        <div class="out-value" id="offerOut">—</div>
+        <div class="out-sub ppa" id="ppaOut" style="display:none;"></div>
+        <div class="out-sub ppa-hint" id="ppaHint">Enter acreage for PPA</div>
+      </div>
+    </div>
+
+    <div class="out-row">
+      <div class="out-label">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+        Realtors <span class="out-note">6% of list</span>
+      </div>
+      <div class="out-val-wrap">
+        <div class="out-value" id="realtorOut">—</div>
+      </div>
+    </div>
+
+    <div class="out-row">
+      <div class="out-label">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        Closing costs <span class="out-note">2% of list</span>
+      </div>
+      <div class="out-val-wrap">
+        <div class="out-value" id="ccOut">—</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="card-divider"></div>
+
+  <div class="profit-bar">
+    <div><div class="profit-bar-label">Estimated Profit</div></div>
+    <div class="profit-bar-amount" id="profitOut">—</div>
+  </div>
+
+  <div class="reset-wrap">
+    <button class="reset-btn" onclick="resetCalc()">&#8635; &nbsp;New Calculation</button>
+  </div>
+
+</main>
+
+<footer class="footer">
+  <strong>Bailey Buys</strong> &nbsp;·&nbsp; Internal Use Only
+</footer>
+
+<script>
+  function fmt(n) { return '$' + Math.round(n).toLocaleString('en-US'); }
+  function roundHundred(n) { return Math.round(n / 100) * 100; }
+
+  function charmRound(raw) {
+    const thou = Math.floor(raw / 1000);
+    const candidates = [
+      thou*1000+500, thou*1000+990,
+      (thou-1)*1000+500, (thou-1)*1000+990,
+      (thou+1)*1000+500, (thou+1)*1000+990,
+    ].filter(v => v > 0);
+    let best = candidates[0], bestDiff = Math.abs(raw - best);
+    for (const c of candidates) { const d = Math.abs(raw - c); if (d < bestDiff) { best = c; bestDiff = d; } }
+    return { value: best, label: (best % 1000 === 990) ? '$X,990' : '$X,500' };
+  }
+
+  function clearOutputs() {
+    ['listOut','offerOut','realtorOut','ccOut'].forEach(id => document.getElementById(id).textContent = '—');
+    document.getElementById('offerInline').textContent = '—';
+    document.getElementById('listSub').textContent = '';
+    document.getElementById('snapBadge').style.display = 'none';
+    document.getElementById('ppaOut').style.display = 'none';
+    document.getElementById('ppaOut').textContent = '';
+    document.getElementById('ppaHint').style.display = 'block';
+    document.getElementById('listPpaOut').style.display = 'none';
+    document.getElementById('listPpaOut').textContent = '';
+    document.getElementById('listPpaHint').style.display = 'none';
+    const p = document.getElementById('profitOut');
+    p.textContent = '—'; p.className = 'profit-bar-amount';
+  }
+
+  function calc() {
+    const mv       = parseFloat(document.getElementById('mktVal').value);
+    const pct      = parseFloat(document.getElementById('listPct').value);
+    const offerPct = parseFloat(document.getElementById('offerPct').value);
+    const acres    = parseFloat(document.getElementById('acres').value);
+
+    if (!mv || mv <= 0) { clearOutputs(); return; }
+
+    const { value: list, label: snapLabel } = charmRound(mv * (1 - pct));
+    const offer   = Math.round(mv * offerPct);
+    const realtor = list * 0.06;
+    const cc      = roundHundred(list * 0.02);
+    const profit  = list - offer - realtor - cc;
+
+    document.getElementById('offerInline').textContent = fmt(offer);
+    document.getElementById('listOut').textContent     = fmt(list);
+    document.getElementById('listSub').textContent     = ((mv - list) / mv * 100).toFixed(1) + '% below market';
+    const badge = document.getElementById('snapBadge');
+    badge.textContent = snapLabel; badge.style.display = 'inline-block';
+    document.getElementById('offerOut').textContent    = fmt(offer);
+    document.getElementById('realtorOut').textContent  = fmt(realtor);
+    document.getElementById('ccOut').textContent       = fmt(cc);
+
+    const ppaEl   = document.getElementById('ppaOut');
+    const ppaHint = document.getElementById('ppaHint');
+    const listPpaEl   = document.getElementById('listPpaOut');
+    const listPpaHint = document.getElementById('listPpaHint');
+    if (acres && acres > 0) {
+      ppaEl.textContent  = '$' + Math.round(offer / acres).toLocaleString('en-US') + ' / ac  (PPA)';
+      ppaEl.style.display = 'block';
+      ppaHint.style.display = 'none';
+      listPpaEl.textContent = '$' + Math.round(list / acres).toLocaleString('en-US') + ' / ac  (PPA)';
+      listPpaEl.style.display = 'block';
+      listPpaHint.style.display = 'none';
+    } else {
+      ppaEl.style.display = 'none';
+      ppaHint.style.display = 'block';
+      listPpaEl.style.display = 'none';
+      listPpaHint.style.display = 'block';
+    }
+
+    const profitEl = document.getElementById('profitOut');
+    profitEl.textContent = fmt(profit);
+    profitEl.className   = 'profit-bar-amount ' + (profit >= 0 ? 'pos' : 'neg');
+  }
+
+  function resetCalc() {
+    document.getElementById('mktVal').value   = '';
+    document.getElementById('acres').value    = '';
+    document.getElementById('listPct').value  = '0.10';
+    document.getElementById('offerPct').value = '0.50';
+    clearOutputs();
+    document.getElementById('mktVal').focus();
+  }
+</script>
+</body>
+</html>
