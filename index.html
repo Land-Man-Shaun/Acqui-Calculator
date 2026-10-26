@@ -502,9 +502,12 @@
 
   function copyRow() {
     const get = id => (document.getElementById(id).textContent || '').trim();
-    const header = ['List Price', 'Realtors', 'CC', 'Est Profit'].join('\t');
-    const values = [get('listOut'), get('realtorOut'), get('ccOut'), get('profitOut')].join('\t');
-    const text = header + '\n' + values;
+    const text = [
+      'List Price\t' + get('listOut'),
+      'Realtors\t'   + get('realtorOut'),
+      'CC\t'         + get('ccOut'),
+      'Est Profit\t' + get('profitOut')
+    ].join('\n');
 
     const btn = document.getElementById('rowBtn');
     const flash = () => {
