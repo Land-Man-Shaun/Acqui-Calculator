@@ -502,11 +502,19 @@
 
   function copyRow() {
     const get = id => (document.getElementById(id).textContent || '').trim();
+    const ppaRaw = (document.getElementById('ppaOut').textContent || '').trim();
+    const ppa = ppaRaw ? ' (' + ppaRaw.replace(/\s*\(PPA\)\s*$/, '').trim() + ')' : '';
+
+    const mvRaw = parseFloat(document.getElementById('mktVal').value);
+    const mv = (mvRaw && mvRaw > 0) ? fmt(mvRaw) : '\u2014';
+
     const text = [
-      'List Price\t' + get('listOut'),
-      'Realtors\t'   + get('realtorOut'),
-      'CC\t'         + get('ccOut'),
-      'Est Profit\t' + get('profitOut')
+      'MV: '         + mv,
+      'List Price: ' + get('listOut'),
+      'Offer: '      + get('offerOut') + ppa,
+      'Realtors: '   + get('realtorOut'),
+      'CC: '         + get('ccOut'),
+      'Est Profit: ' + get('profitOut')
     ].join('\n');
 
     const btn = document.getElementById('rowBtn');
