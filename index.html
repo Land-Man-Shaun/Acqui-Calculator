@@ -163,17 +163,33 @@
   .reset-wrap {
     padding: 0 28px 22px;
     background: rgba(232,185,55,0.05);
-    display: flex; justify-content: flex-end;
+    display: flex; justify-content: flex-end; gap: 10px;
   }
   .reset-btn {
     font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600;
     letter-spacing: 0.12em; text-transform: uppercase;
     color: var(--white-30); background: transparent;
-    border: 1px solid rgba(31,61,46,0.7); border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.12); border-radius: 8px;
     padding: 8px 18px; cursor: pointer;
     transition: color 0.15s, border-color 0.15s, background 0.15s;
   }
   .reset-btn:hover { color: var(--gold); border-color: var(--gold-border); background: var(--gold-faint); }
+  /* Per-value copy buttons */
+  .val-line { display: flex; align-items: center; justify-content: flex-end; gap: 8px; }
+  .copy-ico {
+    flex-shrink: 0;
+    width: 24px; height: 24px;
+    display: inline-flex; align-items: center; justify-content: center;
+    border: 1px solid rgba(255,255,255,0.12); border-radius: 6px;
+    background: transparent; cursor: pointer; padding: 0;
+    color: var(--white-30);
+    transition: color 0.15s, border-color 0.15s, background 0.15s;
+  }
+  .copy-ico:hover { color: var(--gold); border-color: var(--gold-border); background: var(--gold-faint); }
+  .copy-ico.copied { color: var(--success); border-color: var(--success); background: rgba(77,191,127,0.12); }
+  .copy-ico svg { width: 13px; height: 13px; }
+  .copy-ico[disabled] { opacity: 0.25; cursor: not-allowed; }
+  .copy-ico[disabled]:hover { color: var(--white-30); border-color: rgba(255,255,255,0.12); background: transparent; }
 
   /* Footer */
   .footer { margin-top: 24px; font-size: 10px; font-weight: 400; color: var(--white-30); text-align: center; letter-spacing: 0.14em; text-transform: uppercase; }
@@ -287,9 +303,14 @@
         <span class="badge" id="snapBadge" style="display:none;"></span>
       </div>
       <div class="out-val-wrap">
-        <div class="out-value highlight" id="listOut">—</div>
+        <div class="val-line">
+          <span class="out-value highlight" id="listOut">—</span>
+          <button class="copy-ico" data-target="listOut" onclick="copyVal(this)" disabled aria-label="Copy list price">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+          </button>
+        </div>
         <div class="out-sub" id="listSub"></div>
-        <div class="out-sub ppa" id="listPpaOut" style="display:none;"></div>
+        <div class="val-line"><span class="out-sub ppa" id="listPpaOut" style="display:none;"></span><button class="copy-ico" id="listPpaCopy" style="display:none;" data-target="listPpaOut" onclick="copyVal(this)" disabled aria-label="Copy list PPA"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button></div>
         <div class="out-sub ppa-hint" id="listPpaHint" style="display:none;">Enter acreage for PPA</div>
       </div>
     </div>
@@ -300,8 +321,8 @@
         Offer to seller
       </div>
       <div class="out-val-wrap">
-        <div class="out-value" id="offerOut">—</div>
-        <div class="out-sub ppa" id="ppaOut" style="display:none;"></div>
+        <div class="val-line"><span class="out-value" id="offerOut">—</span><button class="copy-ico" data-target="offerOut" onclick="copyVal(this)" disabled aria-label="Copy offer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button></div>
+        <div class="val-line"><span class="out-sub ppa" id="ppaOut" style="display:none;"></span><button class="copy-ico" id="ppaCopy" style="display:none;" data-target="ppaOut" onclick="copyVal(this)" disabled aria-label="Copy offer PPA"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button></div>
         <div class="out-sub ppa-hint" id="ppaHint">Enter acreage for PPA</div>
       </div>
     </div>
@@ -312,7 +333,7 @@
         Realtors <span class="out-note">6% of list</span>
       </div>
       <div class="out-val-wrap">
-        <div class="out-value" id="realtorOut">—</div>
+        <div class="val-line"><span class="out-value" id="realtorOut">—</span><button class="copy-ico" data-target="realtorOut" onclick="copyVal(this)" disabled aria-label="Copy realtor fee"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button></div>
       </div>
     </div>
 
@@ -322,7 +343,7 @@
         Closing costs <span class="out-note">2% of list</span>
       </div>
       <div class="out-val-wrap">
-        <div class="out-value" id="ccOut">—</div>
+        <div class="val-line"><span class="out-value" id="ccOut">—</span><button class="copy-ico" data-target="ccOut" onclick="copyVal(this)" disabled aria-label="Copy closing costs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button></div>
       </div>
     </div>
 
@@ -332,7 +353,7 @@
 
   <div class="profit-bar">
     <div><div class="profit-bar-label">Estimated Profit</div></div>
-    <div class="profit-bar-amount" id="profitOut">—</div>
+    <div class="val-line"><span class="profit-bar-amount" id="profitOut">—</span><button class="copy-ico" data-target="profitOut" onclick="copyVal(this)" disabled aria-label="Copy estimated profit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button></div>
   </div>
 
   <div class="reset-wrap">
@@ -374,6 +395,11 @@
     document.getElementById('listPpaHint').style.display = 'none';
     const p = document.getElementById('profitOut');
     p.textContent = '—'; p.className = 'profit-bar-amount';
+    setCopyEnabled(false);
+    const pc = document.getElementById('ppaCopy');
+    const lpc = document.getElementById('listPpaCopy');
+    if (pc)  { pc.style.display  = 'none'; pc.disabled  = true; }
+    if (lpc) { lpc.style.display = 'none'; lpc.disabled = true; }
   }
 
   function calc() {
@@ -420,6 +446,52 @@
     const profitEl = document.getElementById('profitOut');
     profitEl.textContent = fmt(profit);
     profitEl.className   = 'profit-bar-amount ' + (profit >= 0 ? 'pos' : 'neg');
+
+    setCopyEnabled(true);
+    const showPpaCopy = !!(acres && acres > 0);
+    const pc = document.getElementById('ppaCopy');
+    const lpc = document.getElementById('listPpaCopy');
+    if (pc)  { pc.style.display  = showPpaCopy ? 'inline-flex' : 'none'; pc.disabled  = !showPpaCopy; }
+    if (lpc) { lpc.style.display = showPpaCopy ? 'inline-flex' : 'none'; lpc.disabled = !showPpaCopy; }
+  }
+
+  function copyVal(btn) {
+    const el = document.getElementById(btn.dataset.target);
+    if (!el) return;
+    let text = (el.textContent || '').trim();
+    if (!text || text === '\u2014') return;
+    text = text.replace(/\s*\(PPA\)\s*$/, '').trim();
+
+    const flash = () => {
+      const orig = btn.innerHTML;
+      btn.classList.add('copied');
+      btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+      setTimeout(() => { btn.classList.remove('copied'); btn.innerHTML = orig; }, 1200);
+    };
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(flash).catch(() => fallbackCopy(text, flash));
+    } else {
+      fallbackCopy(text, flash);
+    }
+  }
+
+  function fallbackCopy(text, done) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); done(); } catch (e) {}
+    document.body.removeChild(ta);
+  }
+
+  function setCopyEnabled(on) {
+    document.querySelectorAll('.copy-ico').forEach(b => {
+      if (b.id === 'ppaCopy' || b.id === 'listPpaCopy') return;
+      b.disabled = !on;
+    });
   }
 
   function resetCalc() {
