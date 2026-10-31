@@ -505,12 +505,61 @@
     const ppaRaw = (document.getElementById('ppaOut').textContent || '').trim();
     const ppa = ppaRaw ? ' (' + ppaRaw.replace(/\s*\(PPA\)\s*$/, '').trim() + ')' : '';
 
+    const listPpaRaw = (document.getElementById('listPpaOut').textContent || '').trim();
+    const listPpa = listPpaRaw ? ' (' + listPpaRaw.replace(/\s*\(PPA\)\s*$/, '').trim() + ')' : '';
+
+    const acresRaw = parseFloat(document.getElementById('acres').value);
     const mvRaw = parseFloat(document.getElementById('mktVal').value);
     const mv = (mvRaw && mvRaw > 0) ? fmt(mvRaw) : '\u2014';
+    const mvPpa = (mvRaw > 0 && acresRaw > 0)
+      ? ' (
+      'Offer: '      + get('offerOut') + ppa,
+      'Realtors: '   + get('realtorOut'),
+      'CC: '         + get('ccOut'),
+      'Est Profit: ' + get('profitOut')
+    ].join('\n');
+
+    const btn = document.getElementById('rowBtn');
+    const flash = () => {
+      const orig = btn.innerHTML;
+      btn.classList.add('copied');
+      btn.innerHTML = '&#10003; &nbsp;Copied';
+      setTimeout(() => { btn.classList.remove('copied'); btn.innerHTML = orig; }, 1400);
+    };
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(flash).catch(() => fallbackCopy(text, flash));
+    } else {
+      fallbackCopy(text, flash);
+    }
+  }
+
+  function setCopyEnabled(on) {
+    const rb = document.getElementById('rowBtn');
+    if (rb) rb.disabled = !on;
+    document.querySelectorAll('.copy-ico').forEach(b => {
+      if (b.id === 'ppaCopy' || b.id === 'listPpaCopy') return;
+      b.disabled = !on;
+    });
+  }
+
+  function resetCalc() {
+    document.getElementById('mktVal').value   = '';
+    document.getElementById('acres').value    = '';
+    document.getElementById('listPct').value  = '0.10';
+    document.getElementById('offerPct').value = '0.50';
+    clearOutputs();
+    document.getElementById('mktVal').focus();
+  }
+</script>
+</body>
+</html>
+ + Math.round(mvRaw / acresRaw).toLocaleString('en-US') + ' / ac)'
+      : '';
 
     const text = [
-      'MV: '         + mv,
-      'List Price: ' + get('listOut'),
+      'MV: '         + mv + mvPpa,
+      'List Price: ' + get('listOut') + listPpa,
       'Offer: '      + get('offerOut') + ppa,
       'Realtors: '   + get('realtorOut'),
       'CC: '         + get('ccOut'),
